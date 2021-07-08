@@ -1,9 +1,47 @@
-<div>
-  <button (click)="openWebSocket()">Open Websocket Connection</button>
+<div class="container">
+  <div>
+
+    <button
+      *ngIf="state !== 'open'"
+      class="button blue"
+      (click)="openWebSocket()">
+      Open Websocket Connection
+    </button>
+
+    <button
+      *ngIf="state === 'open'"
+      class="button blue"
+      (click)="closeWebSocket()">
+      Close Websocket Connection
+    </button>
+
+  </div>
+
+  <div *ngIf="state === 'open'">
+
+    <h3>WebSocket Connected</h3>
+
+    <div *ngIf="state === 'close'">
+      WebSocket Disconnected
+    </div>
+
+  </div>
+
+  <div [hidden]="state !== 'open'">
+    <textarea
+      #txtMessage
+      placeholder="Type message here..."
+      (change)="textAreaValue($event)"
+    ></textarea>
+    <button
+      class="button-sm blue"
+      (click)="sendMessage()"
+    >Send</button>
+  </div>
+
+  <div *ngIf="receivedMessage">
+    Message Received: {{ receivedMessage }}
+  </div>
+
 </div>
 
-<div>
-  Send Message:
-  <textarea #message (change)="textAreaValue($event)" [value]="'value'"></textarea>
-  <button (click)="sendMessage('value')"></button>
-</div>

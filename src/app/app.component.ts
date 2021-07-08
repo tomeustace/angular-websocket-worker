@@ -7,7 +7,7 @@ export interface WebSocketControl {
 export enum WebSocketEvent {
   CLOSE = "close",
   OPEN = "open",
-  SEND = "send"
+  MESSAGE = "message"
 }
 @Component({
   selector: 'app-root',
@@ -17,32 +17,49 @@ export enum WebSocketEvent {
 export class AppComponent {
   title = 'angular-websocket-worker';
   worker: Worker;
+  state: WebSocketEvent;
 
-  @ViewChild('message') toTarget: ElementRef;
+  receivedMessage: string;
+  sentMessage: string;
+
+  @ViewChild('txtMessage') toTarget: ElementRef;
 
   ngAfterViewInit() {
     fromEvent(this.toTarget.nativeElement, 'keyup')
-      .subscribe((res: any) => console.log(res.target.value));
+      .subscribe((res: any) => {
+        this.sentMessage = res.target.value;
+      });
   }
-
-  ngOnInit() { }
 
   openWebSocket() {
     if (typeof Worker !== 'undefined') {
-      // Create a new
+
       this.worker = new Worker('./app.worker', { type: 'module' });
+
       this.worker.onmessage = ({ data }) => {
-        console.log(`page got message: ${data}`);
+        if (data.event === WebSocketEvent.OPEN) {
+          this.state = WebSocketEvent.OPEN;
+        }
+        if (data.event === WebSocketEvent.CLOSE) {
+          this.state = WebSocketEvent.CLOSE;
+        }
+        if (data.event === WebSocketEvent.MESSAGE) {
+          this.receivedMessage = data.message;
+        }
       };
-      this.worker.postMessage(WebSocketEvent.OPEN);
+
+      this.worker.postMessage({ event: WebSocketEvent.OPEN });
     } else {
-      // Web Workers are not supported in this environment.
-      // You should add a fallback so that your program still executes correctly.
+      // Worker not supported!!!
     }
   }
 
-  sendMessage(message: string) {
-    this.worker.postMessage({event: WebSocketEvent.SEND, message});
+  closeWebSocket() {
+    this.worker.postMessage({ event: WebSocketEvent.CLOSE });
+  }
+
+  sendMessage() {
+    this.worker.postMessage({event: WebSocketEvent.MESSAGE, message: this.sentMessage});
   }
 
   textAreaValue(value) {

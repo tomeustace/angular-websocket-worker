@@ -1,0 +1,31 @@
+div {
+  margin: 20px;
+}
+textarea, button {
+  margin: 0 10px;
+  vertical-align: bottom;
+}
+.container {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+.button {
+  padding: 0.5rem 1rem;
+  border-radius:0.25rem;
+  color:#ffffff;
+  margin: 0 2rem;
+}
+
+.button-sm {
+  padding: 0.3rem .5rem;
+  border-radius:0.25rem;
+  color:#ffffff;
+  margin: 0 1rem;
+}
+.button.blue, .button-sm.blue {
+  background: #4299e1;
+}
+.button.blue:hover, .button-sm.blue:hover {
+  background: #2b6cb0;
+}
